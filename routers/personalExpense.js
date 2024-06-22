@@ -6,6 +6,7 @@ const { GroupExpense } = require('../models/groupExpenseModel');
 const path = require("path");
 const mongoose = require('mongoose');
 const multer = require("multer");
+const auth=require("../middlewares/verifyauth")
 
 
 const FILE_TYPE_MAP = {
@@ -28,8 +29,8 @@ const upload = multer({ storage: storage })
 
 
 // Get All the PersonalExpenses
-router.get('/', (req, res) => {
-    PersonalExpense.find().populate('GroupExpense').then((result) => {
+router.get('/',auth, (req, res) => {
+    PersonalExpense.find().populate('groupExpense').then((result) => {
         res.json(result);
     }).catch((err) => {
         res.send(err.message)
@@ -37,7 +38,7 @@ router.get('/', (req, res) => {
 })
 
 // Get the PersonalExpenses by 
-router.get('/:groupExpense', (req, res) => {
+router.get('/:groupExpense',auth, (req, res) => {
     const category = req.params.groupExpense
     try {
         PersonalExpense.find({ groupExpense: groupExpense }).then((result) => {
@@ -52,7 +53,7 @@ router.get('/:groupExpense', (req, res) => {
 
 
 // Post A Expense to the Database
-router.post('/:id', upload.single('image'),async (req, res) => {
+router.post('/:id', auth,upload.single('image'),async (req, res) => {
     const groupExpense = await GroupExpense.findOne({_id: req.params.id });
     if (!groupExpense) { return res.status(400).json({ success: false, message: "Category Not Found" }) }
     const file = req.file;

@@ -5,8 +5,7 @@ const app=express()
 const groupExpense=require('./routers/groupExpense');
 const personalExpense=require('./routers/personalExpense');
 const balance=require('./routers/balance');
-
-
+const auth=require('./routers/auth')
 app.use(express.json());
 app.use(cors());
 
@@ -14,6 +13,7 @@ app.use('/personal',personalExpense),
 app.use('/group',groupExpense)
 app.use('/balance',balance)
 app.use('/images', express.static(__dirname + '/images'));
+app.use("/auth",auth)
 
 
 

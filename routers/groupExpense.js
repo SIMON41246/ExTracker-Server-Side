@@ -4,6 +4,7 @@ const { GroupExpense } = require('../models/groupExpenseModel');
 const path = require("path");
 const mongoose = require('mongoose');
 const multer = require("multer");
+const auth=require("../middlewares/verifyauth")
 
 
 const FILE_TYPE_MAP = {
@@ -35,7 +36,7 @@ router.get('/', (req, res) => {
 })
 
 // Get the PersonalExpenses by 
-router.get('/:category', (req, res) => {
+router.get('/:category',auth, (req, res) => {
     const category = req.params.category
     try {
         GroupExpense.find({ category: category }).then((result) => {
@@ -50,7 +51,7 @@ router.get('/:category', (req, res) => {
 
 
 // Post A Expense to the Database
-router.post('/', upload.single('image'), async (req, res) => {
+router.post('/',auth, upload.single('image'), async (req, res) => {
     const groupExpense = await GroupExpense.find({ category: req.body.category });
     if (!groupExpense) { return res.status(400).json({ success: false, message: "Category Exist" }) }
     const file = req.file;
